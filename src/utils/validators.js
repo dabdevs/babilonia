@@ -1,9 +1,9 @@
-const User = require('../models/User');
+const User = require("../models/User");
 
-const validators = {}
+const validators = {};
 
 validators.userExists = async (email) => {
-    return await User.findOne({email});
-}
+  return await User.findOne({ email });
+};
 
-module.exports = validators
+module.exports = validators;
