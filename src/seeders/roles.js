@@ -9,7 +9,6 @@ const seed = async () => {
             new Role({name: 'moderator'}).save(),
             new Role({name: 'admin'}).save(),
         ]).then( (e) => {
-            console.log(e)
             return;
         })
     }

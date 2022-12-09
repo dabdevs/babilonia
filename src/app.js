@@ -3,23 +3,22 @@ const morgan = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const seed = require('./seeders/roles')
+const dbConnect = require("../src/database/connection");
+const dbSeed = require('./seeders/roles');
+
+// Connect Database
+dbConnect();
 
 // Seed the database
-seed()
-
-// Configuration to access the environment variables
-require('dotenv').config()
+dbSeed()
 
 // Routes
 const userRoutes = require('../src/routes/userRoutes');
-
+const authRoutes = require('../src/routes/authRoutes');
 const PORT = 7000;
 
 // Start new express app
 const app = express();
-
-
 
 /**
  *  Middlewares
@@ -37,7 +36,11 @@ app.use(bodyParser.json())
 // To log HTTP requests in the console
 app.use(morgan('dev'));
 
+// User requests
 app.use('/api/users', userRoutes);
+
+// Auth requests
+app.use('/api/auth', authRoutes);
 
 // Listening for incoming requests
 app.listen(PORT, () => console.log('listening on port ' + PORT))

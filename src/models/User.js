@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
+const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
     username: String,
@@ -19,8 +20,14 @@ const userSchema = new Schema({
     versionKey: false
 });
 
-userSchema.statics.encryptPassword = async (password) => {}
-userSchema.statics.comparePassword = async (dbPassword, requestPassword) => {}
+userSchema.statics.encryptPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+}
+
+userSchema.statics.comparePassword = async (requestPassword, dbPassword) => {
+    return await bcrypt.compare(requestPassword, dbPassword);
+}
 
 const User = model('User', userSchema);
 

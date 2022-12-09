@@ -1,8 +1,6 @@
-const dbConnect = require("../database/connection");
 const User = require("../models/User");
-const Role = require("../models/Role");
-
-dbConnect();
+const validators = require('../utils/validators');
+const { assignRoles } = require('../utils/helpers');
 
 let userController = {};
 
@@ -11,18 +9,16 @@ userController.createUser = async (req, res) => {
   const { username, email, password, roles } = req.body;
 
     try {
-        // Create new user Object
-        const user = User({ username, email, password });
+        // Validate user
+        const userExists = await validators.userExists(email)
+        
+        if (userExists) return res.send({"message": "User already exists."})
 
-        // If there is no incoming roles in the request
-        if (!roles) {
-            // Asigning user role to user as default
-            user.roles.push('user');
-        } else {
-            // Asign received roles to the user
-            const foundRoles = await Role.find({name: {$in: roles}});
-            user.roles = foundRoles.map(role => role._id);
-        }
+        // Create new user Object
+        let user = User({ username, email, password: await User.encryptPassword(password) });
+
+        // Asigning roles to user
+        user = await assignRoles(user, roles)
 
         // Save the user in the database
         user.save(function (err) {
@@ -70,6 +66,8 @@ userController.getUser = async (req, res) => {
 userController.updateUser = async (req, res) => {
     try {
         // Update user 
+        const { password } = req.body
+        req.body.password = await User.encryptPassword(password)
         const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true}); 
 
         return res.json({"status": "OK", "user": user});
