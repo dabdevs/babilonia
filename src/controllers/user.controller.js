@@ -47,7 +47,7 @@ userController.createUser = async (req, res) => {
 
 userController.getUsers = async (req, res) => {
   try {
-    // Getting all users from DB
+    // Get all users from DB
     const users = await User.find();
 
     // Returning the users

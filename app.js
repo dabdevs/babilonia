@@ -3,8 +3,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
-const dbConnect = require("../src/database/connection");
-const dbSeed = require("./seeders/roles");
+const dbConnect = require("./src/database/connection");
+const dbSeed = require("./src/seeders/roles");
 
 // Connect Database
 dbConnect();
@@ -13,8 +13,8 @@ dbConnect();
 dbSeed();
 
 // Routes
-const userRoutes = require("../src/routes/userRoutes");
-const authRoutes = require("../src/routes/authRoutes");
+const userRoutes = require("./src/routes/userRoutes");
+const authRoutes = require("./src/routes/authRoutes");
 const PORT = 7000;
 
 // Start new express app
