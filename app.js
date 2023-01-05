@@ -9,6 +9,7 @@ const { seed } = require("./src/seeders/roles");
 // Routes
 const users = require("./src/routes/users");
 const auth = require("./src/routes/auth");
+const listings = require("./src/routes/listings");
 const PORT = 7000;
 
 // Start new express app
@@ -35,6 +36,9 @@ app.use("/api/users", users);
 
 // Auth requests
 app.use("/api/auth", auth);
+
+// Listing requests
+app.use("/api/listings", listings);
 
 const start = async () => {
     try {

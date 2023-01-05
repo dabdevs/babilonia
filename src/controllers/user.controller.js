@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const validators = require("../utils/validators");
+const { exists } = require("../utils/validators");
 const { assignRoles } = require("../utils/helpers");
 
 let controller = {};
@@ -12,7 +12,7 @@ controller.createUser = async (req, res) => {
 
   try {
     // Validate if user exists
-    const userExists = await validators.userExists(email);
+    const userExists = await exists('User', email);
     if (userExists) return res.send({ message: "User already exists." });
 
     // Create new user Object
