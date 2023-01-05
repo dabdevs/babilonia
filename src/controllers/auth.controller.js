@@ -3,12 +3,12 @@ const jwt = require("jsonwebtoken");
 const validators = require("../utils/validators");
 const { assignRoles } = require("../utils/helpers");
 
-let authController = {};
+let controller = {};
 
 /**
  *  Create a new user in the DB
  */
-authController.signup = async (req, res) => {
+controller.signup = async (req, res) => {
   const { username, email, password, roles } = req.body;
 
   try {
@@ -49,7 +49,7 @@ authController.signup = async (req, res) => {
 /**
  *  Sign a user in
  */
-authController.signin = async (req, res) => {
+controller.signin = async (req, res) => {
   try {
     // Get the user to sign in
     const user = await User.findOne({ email: req.body.email }).populate(
@@ -81,4 +81,4 @@ authController.signin = async (req, res) => {
   }
 };
 
-module.exports = authController;
+module.exports = controller;

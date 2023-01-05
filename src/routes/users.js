@@ -11,19 +11,10 @@ const {
 
 const router = Router();
 
-// Get All Users
-router.get("/", getUsers);
+// Get and create user
+router.route("/").get(getUsers).post(createUser);
 
 // Get One User
-router.get("/:id", getUser);
-
-// Create A User
-router.post("/", createUser);
-
-// Update A User
-router.put("/:id", updateUser);
-
-// Delete A User
-router.delete("/:id", deleteUser);
+router.route("/:id").get(getUser).put(updateUser).delete(deleteUser);
 
 module.exports = router;
