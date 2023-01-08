@@ -6,25 +6,26 @@ const { assignRoles } = require("../utils/helpers");
 let controller = {};
 
 /**
- *  Create a new user in the DB
+ *  Register a new user
  */
-controller.signup = async (req, res) => {
-  const { username, email, password, roles } = req.body;
+controller.register = async (req, res) => {
+
+  const { email, password, roles } = req.body;
 
   try {
     // Validate if user exists
-    const userExists = await validators.userExists(email);
-    if (userExists) return res.send({ message: "User already exists." });
+    const user = await User.findOne({ email }, { password: 0 })
+    if (user) return res.send({ message: "User already exists." });
 
     // Create new user object
     let newUser = new User({
-      username,
       email,
       password: await User.encryptPassword(password)
     });
 
     // Asign roles to user
-    newUser = await assignRoles(newUser, roles);
+    if (roles)
+      newUser = await assignRoles(newUser, roles);
 
     // Save new user to DB
     await newUser.save();
@@ -47,9 +48,9 @@ controller.signup = async (req, res) => {
 };
 
 /**
- *  Sign a user in
+ *  Log a user in
  */
-controller.signin = async (req, res) => {
+controller.login = async (req, res) => {
   try {
     // Get the user to sign in
     const user = await User.findOne({ email: req.body.email }).populate(
@@ -80,5 +81,20 @@ controller.signin = async (req, res) => {
     console.log(err);
   }
 };
+
+/**
+ *  Log a user out
+ */
+controller.logout = (req, res) => {
+  try {
+    req.logout(function(err) {  
+      if (err) { return next(err); }
+      return res.redirect('/login');
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 
 module.exports = controller;

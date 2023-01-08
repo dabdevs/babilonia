@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const Role = require("../models/Role");
 const helpers = {};
 
@@ -15,5 +14,9 @@ helpers.assignRoles = async (user, roles = false) => {
 
   return user;
 };
+
+helpers.isLoggedIn = (req, res, next) => {
+  req.user? next() : res.sendStatus(401)
+}
 
 module.exports = helpers;

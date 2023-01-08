@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 // Create user schema
 const userSchema = new Schema(
   {
-    username: String,
     email: String,
     password: String,
     fistname: String,
@@ -17,6 +16,17 @@ const userSchema = new Schema(
       },
     ],
     token: String,
+    google: {
+      id: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
+    },
     active: Boolean,
     dateCreated: Date,
   },

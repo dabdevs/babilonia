@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const { exists } = require("../utils/validators");
 const { assignRoles } = require("../utils/helpers");
 
 let controller = {};
@@ -8,16 +7,15 @@ controller.createUser = async (req, res) => {
   if (Object.keys(req.body).length === 0) return res.status(400).json({message: "Missing parameters"})
 
   // Extracting the values from request
-  const { username, email, password, roles } = req.body;
+  const { email, password, roles } = req.body;
 
   try {
     // Validate if user exists
-    const userExists = await exists('User', email);
+    const userExists = await User.findOne({ email }, { password: 0 })
     if (userExists) return res.send({ message: "User already exists." });
 
     // Create new user Object
     let user = User({
-      username,
       email,
       password: await User.encryptPassword(password),
     });

@@ -1,10 +1,17 @@
 const express = require("express");
+const session = require("express-session");
 const morgan = require("morgan");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const dbConnect = require("./src/database/connection");
 const { seed } = require("./src/seeders/roles");
+const passport = require('passport')
+const path = require('path')
+require("./src/google-auth")
+const { isLoggedIn } = require("./src/utils/helpers")
+// Configuration to access the environment variables
+require("dotenv").config();
 
 // Routes
 const users = require("./src/routes/users");
@@ -14,6 +21,12 @@ const PORT = 7000;
 
 // Start new express app
 const app = express();
+app.use(session({ secret: process.env.SESSION_SECRET }))
+app.use(passport.initialize())
+app.use(passport.session())
+
+//app.use(express.static(__dirname)); // Current directory is root
+app.use(express.static(path.join(__dirname, 'public')));
 
 /**
  *  Middlewares
@@ -26,10 +39,30 @@ app.use(cors());
 app.use(helmet());
 
 // Parse the body of the json request
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 // To log HTTP requests in the console
 app.use(morgan("dev"));
+
+// Index
+app.get("/", (req, res) => {
+    res.send('<a href="api/auth/google">Authenticate with Google</a>')
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname +'/public/login.html')
+})
+
+app.get('/register', (req, res) => {
+    res.sendFile(__dirname +'/public/register.html') 
+})
+
+// secure routes 
+app.get('/api/secure', isLoggedIn, (req, res) => {
+    res.send('Secured!')
+})
 
 // User requests
 app.use("/api/users", users);
